@@ -1,0 +1,284 @@
+{
+  "screening_order": [
+    "pc_ne_demarre_pas",
+    "ecran_noir",
+    "pas_internet",
+    "internet_lent",
+    "connexion_coupe_regulierement",
+    "pc_lent",
+    "ecran_bleu_bsod",
+    "pc_gele",
+    "applications_ne_s_ouvrent_pas",
+    "bureau_ne_s_affiche_pas",
+    "ecran_scintille",
+    "pas_de_son",
+    "clavier_ne_fonctionne_pas",
+    "souris_ne_fonctionne_pas",
+    "usb_non_detecte",
+    "imprimante_ne_fonctionne_pas",
+    "batterie_ne_charge_pas",
+    "batterie_se_decharge_vite",
+    "pc_s_eteint_seul",
+    "erreurs_demarrage",
+    "mises_a_jour_echouent",
+    "jeux_lents"
+  ],
+  "priority_order": [
+    "pc_ne_demarre_pas",
+    "pas_de_lumiere_led",
+    "ventilateur_tourne",
+    "bips_au_demarrage",
+    "un_bip_long",
+    "plusieurs_bips_courts",
+    "erreurs_demarrage",
+    "windows_ne_demarre_pas",
+    "message_boot_device_not_found",
+    "pc_redemarre_en_boucle",
+    "apres_mise_a_jour",
+    "ecran_noir",
+    "pc_fonctionne",
+    "voyant_ecran_allume",
+    "ecran_scintille",
+    "pilote_recent_installe",
+    "ecran_pixelise",
+    "artefacts_visuels",
+    "pas_internet",
+    "wifi_connecte",
+    "signal_wifi_visible",
+    "autres_appareils_fonctionnent",
+    "internet_lent",
+    "connexion_coupe_regulierement",
+    "loin_du_routeur",
+    "beaucoup_appareils_connectes",
+    "pc_lent",
+    "demarrage_lent",
+    "beaucoup_applications_ouvertes",
+    "ram_pleine",
+    "disque_presque_plein",
+    "bruits_cliquetis",
+    "fichiers_inaccessibles",
+    "erreurs_lecture_ecriture",
+    "virus_detecte",
+    "ecran_bleu_bsod",
+    "redemarrages_aleatoires",
+    "pc_gele",
+    "application_specifique",
+    "applications_ne_s_ouvrent_pas",
+    "message_erreur_dll",
+    "bureau_ne_s_affiche_pas",
+    "processus_explorer_manquant",
+    "mises_a_jour_echouent",
+    "espace_disque_suffisant",
+    "pc_s_eteint_seul",
+    "surchauffe",
+    "bruit_ventilateur_fort",
+    "probleme_alim",
+    "pas_de_son",
+    "volume_non_mute",
+    "pilotes_audio_ok",
+    "clavier_ne_fonctionne_pas",
+    "souris_ne_fonctionne_pas",
+    "connexion_usb",
+    "usb_non_detecte",
+    "autre_usb_fonctionne",
+    "imprimante_ne_fonctionne_pas",
+    "visible_dans_windows",
+    "batterie_ne_charge_pas",
+    "chargeur_fonctionnel",
+    "batterie_se_decharge_vite",
+    "age_batterie_superieur_3ans",
+    "jeux_lents",
+    "fps_bas",
+    "parametres_graphiques_eleves"
+  ],
+  "question_triggers": {
+    "pas_de_lumiere_led": [
+      { "question": "pc_ne_demarre_pas", "value": true }
+    ],
+    "ventilateur_tourne": [
+      { "question": "pc_ne_demarre_pas", "value": true }
+    ],
+    "bips_au_demarrage": [
+      { "question": "pc_ne_demarre_pas", "value": true },
+      { "question": "erreurs_demarrage", "value": true }
+    ],
+    "un_bip_long": [
+      { "question": "bips_au_demarrage", "value": true }
+    ],
+    "plusieurs_bips_courts": [
+      { "question": "bips_au_demarrage", "value": true }
+    ],
+    "windows_ne_demarre_pas": [
+      { "question": "erreurs_demarrage", "value": true }
+    ],
+    "message_boot_device_not_found": [
+      { "question": "erreurs_demarrage", "value": true },
+      { "question": "windows_ne_demarre_pas", "value": true }
+    ],
+    "pc_redemarre_en_boucle": [
+      { "question": "erreurs_demarrage", "value": true }
+    ],
+    "apres_mise_a_jour": [
+      { "question": "pc_redemarre_en_boucle", "value": true },
+      { "question": "ecran_bleu_bsod", "value": true },
+      { "question": "ecran_scintille", "value": true },
+      { "question": "mises_a_jour_echouent", "value": true }
+    ],
+    "pc_fonctionne": [
+      { "question": "ecran_noir", "value": true }
+    ],
+    "voyant_ecran_allume": [
+      { "question": "ecran_noir", "value": true }
+    ],
+    "pilote_recent_installe": [
+      { "question": "ecran_scintille", "value": true },
+      { "question": "ecran_bleu_bsod", "value": true }
+    ],
+    "artefacts_visuels": [
+      { "question": "ecran_pixelise", "value": true }
+    ],
+    "wifi_connecte": [
+      { "question": "pas_internet", "value": true },
+      { "question": "internet_lent", "value": true },
+      { "question": "connexion_coupe_regulierement", "value": true }
+    ],
+    "autres_appareils_fonctionnent": [
+      { "question": "pas_internet", "value": true },
+      { "question": "internet_lent", "value": true },
+      { "question": "connexion_coupe_regulierement", "value": true }
+    ],
+    "signal_wifi_visible": [
+      { "question": "pas_internet", "value": true }
+    ],
+    "loin_du_routeur": [
+      { "question": "internet_lent", "value": true },
+      { "question": "connexion_coupe_regulierement", "value": true }
+    ],
+    "beaucoup_appareils_connectes": [
+      { "question": "internet_lent", "value": true }
+    ],
+    "demarrage_lent": [
+      { "question": "pc_lent", "value": true },
+      { "question": "pc_gele", "value": true }
+    ],
+    "beaucoup_applications_ouvertes": [
+      { "question": "pc_lent", "value": true }
+    ],
+    "ram_pleine": [
+      { "question": "pc_lent", "value": true }
+    ],
+    "disque_presque_plein": [
+      { "question": "pc_lent", "value": true },
+      { "question": "demarrage_lent", "value": true }
+    ],
+    "bruits_cliquetis": [
+      { "question": "pc_lent", "value": true },
+      { "question": "fichiers_inaccessibles", "value": true }
+    ],
+    "fichiers_inaccessibles": [
+      { "question": "pc_lent", "value": true },
+      { "question": "bruits_cliquetis", "value": true }
+    ],
+    "erreurs_lecture_ecriture": [
+      { "question": "fichiers_inaccessibles", "value": true },
+      { "question": "bruits_cliquetis", "value": true }
+    ],
+    "virus_detecte": [
+      { "question": "pc_lent", "value": true },
+      { "question": "pc_gele", "value": true }
+    ],
+    "redemarrages_aleatoires": [
+      { "question": "ecran_bleu_bsod", "value": true }
+    ],
+    "application_specifique": [
+      { "question": "pc_gele", "value": true },
+      { "question": "applications_ne_s_ouvrent_pas", "value": true }
+    ],
+    "message_erreur_dll": [
+      { "question": "applications_ne_s_ouvrent_pas", "value": true }
+    ],
+    "processus_explorer_manquant": [
+      { "question": "bureau_ne_s_affiche_pas", "value": true }
+    ],
+    "espace_disque_suffisant": [
+      { "question": "mises_a_jour_echouent", "value": true }
+    ],
+    "surchauffe": [
+      { "question": "pc_s_eteint_seul", "value": true },
+      { "question": "pc_lent", "value": true },
+      { "question": "jeux_lents", "value": true }
+    ],
+    "bruit_ventilateur_fort": [
+      { "question": "surchauffe", "value": true },
+      { "question": "pc_s_eteint_seul", "value": true }
+    ],
+    "probleme_alim": [
+      { "question": "pc_s_eteint_seul", "value": true }
+    ],
+    "volume_non_mute": [
+      { "question": "pas_de_son", "value": true }
+    ],
+    "pilotes_audio_ok": [
+      { "question": "pas_de_son", "value": true }
+    ],
+    "connexion_usb": [
+      { "question": "clavier_ne_fonctionne_pas", "value": true },
+      { "question": "souris_ne_fonctionne_pas", "value": true },
+      { "question": "imprimante_ne_fonctionne_pas", "value": true }
+    ],
+    "autre_usb_fonctionne": [
+      { "question": "usb_non_detecte", "value": true }
+    ],
+    "visible_dans_windows": [
+      { "question": "imprimante_ne_fonctionne_pas", "value": true }
+    ],
+    "chargeur_fonctionnel": [
+      { "question": "batterie_ne_charge_pas", "value": true }
+    ],
+    "age_batterie_superieur_3ans": [
+      { "question": "batterie_se_decharge_vite", "value": true }
+    ],
+    "fps_bas": [
+      { "question": "jeux_lents", "value": true }
+    ],
+    "parametres_graphiques_eleves": [
+      { "question": "jeux_lents", "value": true },
+      { "question": "fps_bas", "value": true }
+    ]
+  },
+  "contradictions": [
+    {
+      "id": "power_vs_running",
+      "message": "Le PC ne peut pas être totalement éteint et sembler fonctionner en même temps.",
+      "conditions": {
+        "pc_ne_demarre_pas": true,
+        "pc_fonctionne": true
+      }
+    },
+    {
+      "id": "screen_black_vs_artifacts",
+      "message": "Un écran totalement noir et des artefacts visibles en même temps indiquent plutôt un problème intermittent.",
+      "conditions": {
+        "ecran_noir": true,
+        "artefacts_visuels": true
+      }
+    },
+    {
+      "id": "disk_noise_without_slowdown",
+      "message": "Des cliquetis de disque sans aucun autre symptôme restent suspects, même si le PC n'est pas encore lent.",
+      "conditions": {
+        "bruits_cliquetis": true,
+        "pc_lent": false
+      }
+    },
+    {
+      "id": "bsod_without_restart_or_driver",
+      "message": "Un écran bleu sans redémarrage et sans mise à jour récente oriente moins clairement le diagnostic.",
+      "conditions": {
+        "ecran_bleu_bsod": true,
+        "redemarrages_aleatoires": false,
+        "pilote_recent_installe": false
+      }
+    }
+  ]
+}

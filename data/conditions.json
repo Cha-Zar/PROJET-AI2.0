@@ -1,0 +1,58 @@
+{
+  "settings": {
+    "min_answers": 5,
+    "max_diagnoses": 5,
+    "max_questions": 0,
+    "unknown_penalty": 0.1
+  },
+  "inconsistency_rules": [
+    {
+      "id": "INC001",
+      "if": {
+        "pc_ne_demarre_pas": true,
+        "pc_fonctionne": true
+      },
+      "message": "Incoherence: vous avez indique que le PC ne demarre pas mais qu'il fonctionne."
+    },
+    {
+      "id": "INC002",
+      "if": {
+        "ecran_noir": true,
+        "artefacts_visuels": true
+      },
+      "message": "Incoherence: ecran noir complet et artefacts visuels ne vont pas ensemble."
+    },
+    {
+      "id": "INC003",
+      "if": {
+        "pas_internet": true,
+        "internet_lent": true
+      },
+      "message": "Incoherence: absence totale d'Internet et lenteur Internet ne decrivent pas le meme etat."
+    },
+    {
+      "id": "INC004",
+      "if": {
+        "pc_ne_demarre_pas": true,
+        "pas_internet": true
+      },
+      "message": "Incoherence: un PC qui ne demarre pas ne peut pas etre diagnostique comme 'pas Internet' au meme moment."
+    },
+    {
+      "id": "INC005",
+      "if": {
+        "pc_ne_demarre_pas": true,
+        "pc_lent": true
+      },
+      "message": "Incoherence: si le PC ne demarre pas, le symptome 'PC lent' n'est pas prioritaire."
+    },
+    {
+      "id": "INC006",
+      "if": {
+        "pc_ne_demarre_pas": true,
+        "ecran_bleu_bsod": true
+      },
+      "message": "Incoherence: un BSOD suppose que le systeme a deja demarre partiellement."
+    }
+  ]
+}

@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SysDiag  Système Expert de Diagnostic Informatique</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  /* --- Le CSS reste strictement identique à votre version --- */
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a25;
+    --border: #252535;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --danger: #ef4444;
+    --success: #10b981;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .app { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+  header {
+    padding: 40px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .logo-block { flex: 1 }
+  .logo-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .logo-title {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo-sub {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .header-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-cyan { background: rgba(0,229,255,0.1); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+  .badge-purple { background: rgba(124,58,237,0.1); color: #a78bfa; border: 1px solid rgba(124,58,237,0.2); }
+  .progress-container { margin-bottom: 32px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .progress-label { font-family: var(--mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+  .progress-count { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .question-section { animation: fadeSlideIn 0.3s ease; }
+  @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 12px 12px 0 0;
+  }
+  .question-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .question-text {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  .answer-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+  .answer-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .answer-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .answer-btn.yes:hover, .answer-btn.yes.active { border-color: var(--success); background: rgba(16,185,129,0.12); color: var(--success); }
+  .answer-btn.no:hover, .answer-btn.no.active { border-color: var(--danger); background: rgba(239,68,68,0.12); color: var(--danger); }
+  .answer-btn.unknown:hover, .answer-btn.unknown.active { border-color: var(--accent3); background: rgba(245,158,11,0.12); color: var(--accent3); }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; }
+  .nav-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .nav-btn.primary:hover { background: #00bcd4; box-shadow: 0 0 20px rgba(0,229,255,0.3); }
+  .nav-btn.primary.locked {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border-color: var(--border);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  .nav-btn.primary.locked:hover { background: var(--surface2); color: var(--text-muted); border-color: var(--border); box-shadow: none; }
+  .min-warning {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent3);
+    margin-bottom: 10px;
+  }
+  .facts-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .facts-title { font-family: var(--mono); font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+  .fact-list { display: flex; flex-direction: column; gap: 6px; }
+  .fact-item { display: flex; align-items: flex-start; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .fact-item:last-child { border-bottom: none; }
+  .fact-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+  .fact-dot.yes { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .fact-dot.no { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  .fact-dot.unknown { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); }
+  .results-section { animation: fadeSlideIn 0.4s ease; }
+  .results-header { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .results-label { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+  .results-title { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .results-meta { font-family: var(--mono); font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  .diagnosis-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    transition: transform 0.2s;
+  }
+  .diagnosis-card:hover { transform: translateY(-2px); }
+  .diagnosis-card.top { border-color: rgba(0,229,255,0.3); box-shadow: 0 0 30px rgba(0,229,255,0.05); }
+  .diagnosis-header { padding: 20px 24px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; cursor: pointer; user-select: none; }
+  .diagnosis-left { flex: 1 }
+  .diagnosis-rank { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .diagnosis-conclusion { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .diagnosis-category { font-family: var(--mono); font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+  .confidence-block { text-align: right; flex-shrink: 0; }
+  .confidence-value { font-family: var(--mono); font-size: 28px; font-weight: 700; line-height: 1; }
+  .confidence-value.high { color: var(--success); }
+  .confidence-value.med { color: var(--accent3); }
+  .confidence-value.low { color: var(--danger); }
+  .confidence-label { font-family: var(--mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .confidence-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 10px; width: 80px; margin-left: auto; overflow: hidden; }
+  .confidence-fill { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+  .fill-high { background: var(--success); }
+  .fill-med { background: var(--accent3); }
+  .fill-low { background: var(--danger); }
+  .diagnosis-body { padding: 0 24px 24px; display: none; border-top: 1px solid var(--border); }
+  .diagnosis-body.open { display: block; }
+  .solution-block { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 16px 18px; margin-top: 20px; margin-bottom: 16px; }
+  .solution-label { font-family: var(--mono); font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .solution-text { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+  .conditions-block { margin-top: 16px; }
+  .conditions-label { font-family: var(--mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .conditions-list { display: flex; flex-direction: column; gap: 6px; }
+  .condition-item { display: flex; align-items: flex-start; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); padding: 4px 0; }
+  .cond-icon { flex-shrink: 0; }
+  .no-results { text-align: center; padding: 60px 20px; background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; }
+  .no-results-icon { font-size: 48px; margin-bottom: 16px; }
+  .no-results-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .no-results-text { font-family: var(--mono); font-size: 12px; color: var(--text-muted); max-width: 400px; margin: 0 auto 24px; line-height: 1.8; }
+  .start-section { text-align: center; padding: 20px 0 40px; }
+  .start-desc { font-family: var(--mono); font-size: 13px; color: var(--text-muted); max-width: 500px; margin: 0 auto 40px; line-height: 1.9; }
+  .stats-row { display: flex; justify-content: center; gap: 32px; margin-bottom: 40px; flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-value { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-family: var(--mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+  .start-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-family: var(--mono); font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; transition: all 0.2s; }
+  .start-btn:hover { background: #00bcd4; box-shadow: 0 0 30px rgba(0,229,255,0.4); transform: translateY(-2px); }
+  .rule-manager { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .rule-manager-title { font-family: var(--mono); font-size: 11px; color: var(--accent2); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .text-input { flex: 1; min-width: 180px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; color: var(--text); font-family: var(--mono); font-size: 12px; outline: none; transition: border-color 0.2s; }
+  .text-input:focus { border-color: var(--accent); }
+  .small-btn { padding: 10px 18px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); font-family: var(--mono); font-size: 11px; cursor: pointer; transition: all 0.18s; white-space: nowrap; letter-spacing: 1px; }
+  .small-btn:hover { border-color: var(--accent2); color: #a78bfa; }
+  .small-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+  .section-toggle { font-family: var(--mono); font-size: 11px; color: var(--text-muted); text-decoration: none; cursor: pointer; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+  .section-toggle:hover { color: var(--accent); }
+  footer { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+  .rule-count-badge { font-family: var(--mono); font-size: 11px; padding: 4px 12px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); border-radius: 4px; color: #a78bfa; }
+  .chevron { font-size: 12px; transition: transform 0.2s; color: var(--text-muted); }
+  .chevron.open { transform: rotate(180deg); }
+  .notif { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 8px; font-family: var(--mono); font-size: 12px; font-weight: 700; opacity: 0; transform: translateY(10px); transition: all 0.3s; z-index: 100; pointer-events: none; }
+  .notif.show { opacity: 1; transform: translateY(0); }
+  .notif.success { background: rgba(16,185,129,0.15); border: 1px solid var(--success); color: var(--success); }
+  .notif.error { background: rgba(239,68,68,0.15); border: 1px solid var(--danger); color: var(--danger); }
+  @media (max-width: 600px) { .answer-buttons { flex-direction: column; } .answer-btn { flex: none; } .stats-row { gap: 20px; } }
+  .inconsistency-box { background: rgba(245,158,11,0.1); border-left: 3px solid var(--accent3); padding: 16px; margin: 20px auto; max-width: 500px; text-align: left; border-radius: 8px; }
+  .suggestion-box { background: rgba(124,58,237,0.1); border-left: 3px solid var(--accent2); padding: 16px; margin: 20px auto; max-width: 500px; text-align: left; border-radius: 8px; }
+  .expert-box { background: rgba(0,229,255,0.1); border-left: 3px solid var(--accent); padding: 16px; margin: 20px auto; max-width: 500px; text-align: left; border-radius: 8px; }
+  .box-title { font-family: var(--mono); font-size: 11px; margin-bottom: 8px; }
+  .box-list { margin: 0; padding-left: 20px; color: var(--text-dim); font-size: 12px; line-height: 1.6; }
+  .expert-text { color: var(--text-dim); font-size: 12px; line-height: 1.6; margin: 0; }
+  .progress-container { margin-bottom: 32px; }
+.progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.progress-label { font-family: var(--mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+.progress-count { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+.progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo-block">
+      <div class="logo-tag">// sys_expert_v1.0</div>
+      <div class="logo-title">SysDiag</div>
+      <div class="logo-sub">Diagnostic de Panne Informatique  FST / Dép. SI</div>
+    </div>
+    <div class="header-badge">
+      <div class="badge badge-cyan">Chaînage Avant</div>
+      <div class="badge badge-purple" id="header-rule-count">0 Règles</div>
+    </div>
+  </header>
+  <div id="app-root"></div>
+  <footer>
+    <div class="footer-text">FST · Fondements de l'IA · Équipe 4 membres · Mohamed Lassoued</div>
+    <div class="rule-count-badge" id="rule-count-badge">0 règles chargées</div>
+  </footer>
+</div>
+<div class="notif" id="notif"></div>
+
+<script>
+let MIN_ANSWERS = 5;
+let MAX_DIAGNOSES = 5;
+let MAX_QUESTIONS = 18;
+
+let state = {
+  screen: 'loading',
+  sessionId: null,
+  rules: [],
+  facts: {},
+  answers: {},
+  diagnoses: [],
+  inconsistencies: [],
+  currentQuestion: null,
+  answeredCount: 0,
+  showRuleManager: false,
+  showFacts: false,
+  symptomsCount: 0,
+  categoriesCount: 0,
+  remainingRulesCount: 0
+};
+
+let QUESTIONS = {};
+
+function updateStats() {
+  const allSids = new Set();
+  for (const rule of state.rules) {
+    for (const sid of Object.keys(rule.conditions || {})) allSids.add(sid);
+  }
+  state.symptomsCount = allSids.size;
+
+  const categoriesSet = new Set();
+  for (const rule of state.rules) {
+    if (rule.category) categoriesSet.add(rule.category);
+  }
+  state.categoriesCount = categoriesSet.size;
+
+  const headerBadge = document.getElementById('header-rule-count');
+  if (headerBadge) headerBadge.textContent = `${state.rules.length} Règles`;
+
+  const footerBadge = document.getElementById('rule-count-badge');
+  if (footerBadge) footerBadge.textContent = `${state.rules.length} règles chargées`;
+}
+
+function buildFactsFromAnswers() {
+  const facts = {};
+  for (const [sid, val] of Object.entries(state.answers || {})) {
+    if (val === 'yes') facts[sid] = true;
+    else if (val === 'no') facts[sid] = false;
+    else facts[sid] = null;
+  }
+  return facts;
+}
+
+function computeRemainingRulesCount() {
+  const facts = Object.keys(state.facts || {}).length > 0 ? state.facts : buildFactsFromAnswers();
+  let count = 0;
+
+  for (const rule of state.rules || []) {
+    const conditions = rule.conditions || {};
+    let contradicted = false;
+    for (const [sid, expected] of Object.entries(conditions)) {
+      const actual = facts[sid];
+      if (actual === undefined || actual === null) continue;
+      if (actual !== expected) {
+        contradicted = true;
+        break;
+      }
+    }
+    if (!contradicted) count += 1;
+  }
+
+  state.remainingRulesCount = count;
+}
+
+async function loadBootstrap() {
+  try {
+    const response = await fetch('/api/bootstrap');
+    if (!response.ok) throw new Error('Impossible de charger /api/bootstrap');
+    const data = await response.json();
+
+    const settings = data.settings || {};
+    MIN_ANSWERS = Number.isFinite(settings.min_answers) ? settings.min_answers : 5;
+    MAX_DIAGNOSES = Number.isFinite(settings.max_diagnoses) ? settings.max_diagnoses : 5;
+    MAX_QUESTIONS = Number.isFinite(settings.max_questions) ? settings.max_questions : 0;
+
+    state.rules = Array.isArray(data.rules) ? data.rules : [];
+    const questionsPayload = Array.isArray(data.questions)
+      ? data.questions
+      : (Array.isArray(data.symptom_questions) ? data.symptom_questions : []);
+
+    QUESTIONS = {};
+    for (const q of questionsPayload) {
+      if (q && q.id) QUESTIONS[q.id] = q.question || q.id;
+    }
+
+    computeRemainingRulesCount();
+
+    updateStats();
+    state.screen = 'start';
+    render();
+  } catch (error) {
+    document.getElementById('app-root').innerHTML = `
+      <div style="text-align:center;padding:60px 20px;">
+        <div style="font-size:48px;margin-bottom:16px;">❌</div>
+        <div style="font-size:20px;font-weight:700;color:var(--danger);margin-bottom:8px;">Erreur backend</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text-muted);">
+          ${error.message}<br><br>
+          Lancez le serveur Python (Flask) puis rechargez la page.
+        </div>
+      </div>
+    `;
+  }
+}
+
+function render() {
+  const root = document.getElementById('app-root');
+  if (state.screen === 'loading') {
+    root.innerHTML = `<div style="text-align:center;padding:80px 20px;"><div style="font-family:var(--mono);font-size:13px;color:var(--accent);">// Chargement du moteur Python...</div></div>`;
+    return;
+  }
+  if (state.screen === 'start') root.innerHTML = renderStart();
+  else if (state.screen === 'diagnose') root.innerHTML = renderDiagnose();
+  else if (state.screen === 'results') root.innerHTML = renderResults();
+
+  updateStats();
+}
+
+function renderStart() {
+  return `
+    <div class="start-section">
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-value">${state.rules.length}</div><div class="stat-label">Règles</div></div>
+        <div class="stat-item"><div class="stat-value">${state.symptomsCount}</div><div class="stat-label">Symptômes</div></div>
+        <div class="stat-item"><div class="stat-value">${state.categoriesCount}</div><div class="stat-label">Catégories</div></div>
+        <div class="stat-item"><div class="stat-value">${MAX_DIAGNOSES}</div><div class="stat-label">Max résultats</div></div>
+      </div>
+      <p class="start-desc">
+        Ce système expert utilise le <strong>chaînage avant</strong> côté Python.<br>
+        Répondez à <strong>au moins ${MIN_ANSWERS} questions</strong> pour débloquer le diagnostic.
+      </p>
+      <button class="start-btn" onclick="startDiagnosis()">▶ &nbsp; Lancer le diagnostic</button>
+    </div>
+    <div style="margin-top: 40px;">
+      <div class="section-toggle" onclick="toggleRuleManager()">
+        ⚙ &nbsp; Gestionnaire de règles &nbsp;<span style="color:var(--accent2)">${state.showRuleManager ? '▲ masquer' : '▼ afficher'}</span>
+      </div>
+      ${state.showRuleManager ? renderRuleManager() : ''}
+    </div>
+  `;
+}
+
+function renderRuleManager() {
+  return `
+    <div class="rule-manager">
+      <div class="rule-manager-title">⚙ Gestion dynamique des règles (session serveur)</div>
+      <div class="input-row" style="margin-bottom:10px;">
+        <input class="text-input" id="del-rule-id" placeholder="ID à supprimer (ex: R001)">
+        <button class="small-btn danger" onclick="deleteRule()">Supprimer</button>
+      </div>
+      <div style="margin-top:16px;">
+        <textarea class="text-input" id="new-rule-json" rows="5" style="width:100%;" placeholder='{"id":"R999","category":"Custom","conditions":{"pc_lent":true},"conclusion":"...","solution":"...","confidence":0.8}'></textarea>
+        <button class="small-btn" onclick="addRule()" style="margin-top:8px;">+ Ajouter règle</button>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="facts-title">Règles actives</div>
+        <div style="max-height:200px;overflow-y:auto;">
+          ${state.rules.map(r => `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;font-family:var(--mono)"><span style="color:var(--accent)">${r.id}</span>  ${r.category}  ${(r.conclusion || '').substring(0,42)}...</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDiagnose() {
+  const answered = state.answeredCount;
+  const totalKnownQuestions = Math.max(Object.keys(QUESTIONS).length, 1);
+  const safeMaxQuestions = MAX_QUESTIONS > 0 ? MAX_QUESTIONS : totalKnownQuestions;
+  const progress = Math.min((answered / safeMaxQuestions) * 100, 100);
+  const minReached = answered >= MIN_ANSWERS;
+
+  if (!state.currentQuestion) {
+    return `
+      <div class="progress-container">
+        <div class="progress-header">
+          <div class="progress-label">// Progression diagnostic</div>
+          <div class="progress-count">Question ${Math.min(answered + 1, safeMaxQuestions)} / ${safeMaxQuestions}</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${progress}%"></div>
+        </div>
+      </div>
+      <div class="question-section">
+        <div class="question-card">
+          <div class="question-num">// ORCHESTRATION</div>
+          <div class="question-text">Aucune question suivante n'a été fournie pour le moment.</div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--text-muted);line-height:1.8;">
+            Règles restantes compatibles: <strong>${state.remainingRulesCount}</strong><br>
+            Réponses collectées: <strong>${answered}</strong>
+          </div>
+          <div class="answer-buttons" style="margin-top:16px;">
+            <button class="answer-btn" onclick="recoverNextQuestion()">↻ Chercher la prochaine question</button>
+            ${minReached ? '<button class="answer-btn yes" onclick="runAndShowResults()">▶ Voir le diagnostic</button>' : ''}
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="nav-btn" onclick="startOver()">↺ Recommencer</button>
+          ${minReached ? '<button class="nav-btn primary" onclick="runAndShowResults()">Diagnostiquer →</button>' : '<button class="nav-btn primary locked" onclick="showNotif(\'Répondez encore pour continuer\', \'error\')">Diagnostiquer →</button>'}
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="progress-container">
+      <div class="progress-header">
+        <div class="progress-label">// Progression diagnostic</div>
+        <div class="progress-count">Question ${answered + 1} / ${safeMaxQuestions} · Règles restantes: ${state.remainingRulesCount}</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${progress}%"></div>
+      </div>
+    </div>
+    <div class="question-section">
+      <div class="question-card">
+        <div class="question-num">// SYMPTÔME_${String(answered + 1).padStart(3, '0')}</div>
+        <div class="question-text">${state.currentQuestion.question}</div>
+        <div class="answer-buttons">
+          <button class="answer-btn yes" onclick="answer('${state.currentQuestion.id}','yes')">✓ OUI</button>
+          <button class="answer-btn no" onclick="answer('${state.currentQuestion.id}','no')">✗ NON</button>
+          <button class="answer-btn unknown" onclick="answer('${state.currentQuestion.id}','unknown')">? INCONNU</button>
+        </div>
+      </div>
+      ${!minReached ? `<div class="min-warning">ℹ Répondez encore <strong>${MIN_ANSWERS - answered}</strong> question(s) pour débloquer le bouton "Diagnostiquer".</div>` : ''}
+      <div class="nav-row">
+        <button class="nav-btn" onclick="startOver()">↺ Recommencer</button>
+        <button class="nav-btn primary ${!minReached ? 'locked' : ''}" onclick="${minReached ? 'runAndShowResults()' : 'showNotif(\'Répondez à au moins ' + MIN_ANSWERS + ' questions d\\\'abord\', \'error\')'}">Diagnostiquer →</button>
+      </div>
+    </div>
+    ${answered > 0 ? `<div style="margin-top:24px;"><div class="section-toggle" onclick="toggleFacts()">📋 Faits collectés (${answered}) &nbsp;<span style="color:var(--accent2)">${state.showFacts ? '▲' : '▼'}</span></div>${state.showFacts ? renderFactsPanel() : ''}</div>` : ''}
+  `;
+}
+
+function renderFactsPanel() {
+  return `
+    <div class="facts-panel">
+      <div class="facts-title">// Base de faits · Session courante</div>
+      <div class="fact-list">
+        ${Object.entries(state.answers).map(([sid, val]) => {
+          const cls = val === 'yes' ? 'yes' : val === 'no' ? 'no' : 'unknown';
+          const icon = val === 'yes' ? 'OUI' : val === 'no' ? 'NON' : '?';
+          return `<div class="fact-item"><div class="fact-dot ${cls}"></div><span style="flex:1">${QUESTIONS[sid] || sid}</span><span style="color:var(--text-muted);">[${icon}]</span></div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderResults() {
+  const d = state.diagnoses;
+  const answeredCount = state.answeredCount;
+  return `
+    <div class="results-section">
+      <div class="results-header">
+        <div class="results-label">// Résultats du diagnostic</div>
+        <div class="results-title">${d.length > 0 ? `${d.length} diagnostic${d.length > 1 ? 's' : ''} trouvé${d.length > 1 ? 's' : ''}` : 'Aucun résultat'}</div>
+        <div class="results-meta">Basé sur ${answeredCount} réponses · ${state.rules.length} règles évaluées${d.length === MAX_DIAGNOSES ? ' · Top ' + MAX_DIAGNOSES + ' affichés' : ''}</div>
+      </div>
+      ${d.length === 0 ? `
+        <div class="no-results">
+          <div class="no-results-icon">🔍</div>
+          <div class="no-results-title">Aucun diagnostic correspondant</div>
+          <div class="no-results-text">Les symptômes renseignés ne correspondent à aucune règle suffisamment forte.</div>
+          ${state.inconsistencies.length > 0 ? `<div class="inconsistency-box"><div class="box-title" style="color:var(--accent3);">⚠️ INCOHÉRENCES DÉTECTÉES</div><ul class="box-list">${state.inconsistencies.map(i => `<li>${i}</li>`).join('')}</ul></div>` : ''}
+          <div class="suggestion-box"><div class="box-title" style="color:#a78bfa;">💡 SUGGESTIONS</div><ul class="box-list"><li>Vérifiez la cohérence de vos réponses</li><li>Répondez OUI/NON si possible plutôt qu'INCONNU</li><li>Relancez le diagnostic avec des observations plus précises</li></ul></div>
+          <div class="expert-box"><div class="box-title" style="color:var(--accent);">🛠️ CONSEIL D'EXPERT</div><div class="expert-text">Vérifiez alimentation, câbles, voyants et bips au démarrage avant toute action risquée.<br>En cas de données critiques, faites une sauvegarde dès que possible.</div></div>
+          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;"><button class="nav-btn" onclick="goBack()">← Revenir</button><button class="nav-btn" onclick="startOver()">↺ Recommencer</button></div>
+        </div>
+      ` : d.map((diag, i) => renderDiagCard(diag, i)).join('')}
+      ${d.length > 0 ? `<div style="margin-top:24px;display:flex;gap:12px;"><button class="nav-btn" onclick="startOver()">↺ Nouveau diagnostic</button></div>` : ''}
+      ${answeredCount > 0 ? `<div style="margin-top:24px;"><div class="section-toggle" onclick="toggleFacts()">📋 &nbsp; Tous les faits collectés (${answeredCount}) &nbsp;<span style="color:var(--accent2)">${state.showFacts ? '▲' : '▼'}</span></div>${state.showFacts ? renderFactsPanel() : ''}</div>` : ''}
+    </div>
+  `;
+}
+
+function renderDiagCard(diag, i) {
+  const pct = Math.round((diag.confidence || 0) * 100);
+  const cls = pct >= 85 ? 'high' : pct >= 70 ? 'med' : 'low';
+  const fillCls = `fill-${cls}`;
+  return `
+    <div class="diagnosis-card ${i === 0 ? 'top' : ''}">
+      <div class="diagnosis-header" onclick="toggleDiagCard('card-${i}', 'chev-${i}')">
+        <div>
+          <div class="diagnosis-rank">${i === 0 ? '🏆 DIAGNOSTIC PRINCIPAL' : `#${i + 1} DIAGNOSTIC`} · ${diag.rule_id}</div>
+          <div class="diagnosis-conclusion">${diag.conclusion}</div>
+          <div class="diagnosis-category">Catégorie : ${diag.category}</div>
+        </div>
+        <div>
+          <div class="confidence-value ${cls}">${pct}%</div>
+          <div class="confidence-label">Confiance</div>
+          <div class="confidence-bar"><div class="confidence-fill ${fillCls}" style="width:${pct}%"></div></div>
+          <div class="chevron" id="chev-${i}">▼</div>
+        </div>
+      </div>
+      <div class="diagnosis-body ${i === 0 ? 'open' : ''}" id="card-${i}">
+        <div class="solution-block"><div class="solution-label">💡 Solution recommandée</div><div class="solution-text">${diag.solution}</div></div>
+        <div class="conditions-block">
+          <div class="conditions-label">🔍 Conditions évaluées</div>
+          <div class="conditions-list">${Object.entries(diag.conditions || {}).map(([sid, expected]) => {
+            const actual = state.facts[sid];
+            const icon = actual === undefined || actual === null ? '❓' : (actual === expected ? '✅' : '❌');
+            return `<div class="condition-item"><span class="cond-icon">${icon}</span><span>${QUESTIONS[sid] || sid}</span><span style="margin-left:auto;">→ ${expected ? 'OUI' : 'NON'}</span></div>`;
+          }).join('')}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function startDiagnosis() {
+  try {
+    const response = await fetch('/api/session/start', { method: 'POST' });
+    if (!response.ok) throw new Error('Impossible de démarrer la session');
+    const data = await response.json();
+
+    state.sessionId = data.session_id;
+    state.screen = 'diagnose';
+    state.facts = {};
+    state.answers = {};
+    state.diagnoses = [];
+    state.inconsistencies = [];
+    state.answeredCount = data.answered_count || 0;
+    state.remainingRulesCount = Number.isFinite(data.candidate_rules)
+      ? data.candidate_rules
+      : state.rules.length;
+    state.currentQuestion = data.next_question || null;
+    if (!Number.isFinite(data.candidate_rules)) computeRemainingRulesCount();
+    render();
+  } catch (error) {
+    showNotif(`Erreur: ${error.message}`, 'error');
+  }
+}
+
+async function answer(qId, val) {
+  if (!state.sessionId) {
+    showNotif('Session manquante. Relancez le diagnostic.', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/session/${state.sessionId}/answer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: qId, answer: val })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Erreur lors de la réponse');
+
+    state.answers[qId] = val;
+    state.facts = data.facts || state.facts;
+    state.answeredCount = data.answered_count || state.answeredCount;
+    state.remainingRulesCount = Number.isFinite(data.candidate_rules)
+      ? data.candidate_rules
+      : state.remainingRulesCount;
+    state.currentQuestion = data.next_question || null;
+    if (!Number.isFinite(data.candidate_rules)) computeRemainingRulesCount();
+
+    if (data.diagnoses) {
+      state.diagnoses = data.diagnoses;
+      state.inconsistencies = data.inconsistencies || [];
+      state.screen = 'results';
+    }
+    render();
+  } catch (error) {
+    showNotif(`Erreur: ${error.message}`, 'error');
+  }
+}
+
+async function runAndShowResults() {
+  if (!state.sessionId) {
+    showNotif('Session manquante. Relancez le diagnostic.', 'error');
+    return;
+  }
+  if (state.answeredCount < MIN_ANSWERS) {
+    showNotif(`Répondez à au moins ${MIN_ANSWERS} questions (${state.answeredCount}/${MIN_ANSWERS})`, 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/session/${state.sessionId}/diagnose`, { method: 'POST' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Erreur pendant le diagnostic');
+
+    state.diagnoses = data.diagnoses || [];
+    state.inconsistencies = data.inconsistencies || [];
+    state.screen = 'results';
+    render();
+  } catch (error) {
+    showNotif(`Erreur: ${error.message}`, 'error');
+  }
+}
+
+function startOver() {
+  state.screen = 'start';
+  state.sessionId = null;
+  state.facts = {};
+  state.answers = {};
+  state.diagnoses = [];
+  state.inconsistencies = [];
+  state.currentQuestion = null;
+  state.answeredCount = 0;
+  state.showFacts = false;
+  state.remainingRulesCount = state.rules.length;
+  render();
+}
+
+async function recoverNextQuestion() {
+  try {
+    const response = await fetch('/api/interview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers: buildFactsFromAnswers() })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Impossible de récupérer une question');
+
+    state.currentQuestion = data.next_question || null;
+    state.inconsistencies = data.inconsistencies || state.inconsistencies;
+    if (Number.isFinite(data.candidate_rules)) {
+      state.remainingRulesCount = data.candidate_rules;
+    } else {
+      computeRemainingRulesCount();
+    }
+
+    if (!state.currentQuestion && state.answeredCount >= MIN_ANSWERS) {
+      showNotif('Plus de questions utiles. Vous pouvez diagnostiquer.', 'success');
+    } else if (state.currentQuestion) {
+      showNotif('Question récupérée.', 'success');
+    } else {
+      showNotif('Toujours aucune question disponible.', 'error');
+    }
+
+    render();
+  } catch (error) {
+    showNotif(`Erreur: ${error.message}`, 'error');
+  }
+}
+
+function goBack() {
+  if (!state.sessionId) {
+    state.screen = 'start';
+  } else {
+    state.screen = 'diagnose';
+  }
+  render();
+}
+
+function toggleDiagCard(id, chevId) {
+  const body = document.getElementById(id);
+  const chev = document.getElementById(chevId);
+  if (body) body.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
+}
+
+function toggleRuleManager() {
+  state.showRuleManager = !state.showRuleManager;
+  render();
+}
+
+function toggleFacts() {
+  state.showFacts = !state.showFacts;
+  render();
+}
+
+async function addRule() {
+  const input = document.getElementById('new-rule-json');
+  try {
+    const rule = JSON.parse(input.value);
+    const response = await fetch('/api/rules/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(rule)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Ajout impossible');
+
+    input.value = '';
+    showNotif(`Règle ${rule.id} ajoutée`, 'success');
+    await loadBootstrap();
+  } catch (e) {
+    showNotif(`Erreur: ${e.message}`, 'error');
+  }
+}
+
+async function deleteRule() {
+  const id = document.getElementById('del-rule-id').value.trim().toUpperCase();
+  if (!id) {
+    showNotif('Entrez un ID de règle.', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/rules/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Suppression impossible');
+
+    showNotif(`Règle ${id} supprimée`, 'success');
+    await loadBootstrap();
+  } catch (e) {
+    showNotif(`Erreur: ${e.message}`, 'error');
+  }
+}
+
+function showNotif(msg, type) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.className = `notif ${type} show`;
+  setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+render();
+loadBootstrap();
+</script>
+</body>
+</html>

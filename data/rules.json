@@ -1,0 +1,520 @@
+{
+  "settings": {
+    "min_answers": 5,
+    "max_diagnoses": 5
+  },
+  "rules": [
+    {
+      "id": "R01",
+      "category": "Alimentation",
+      "conditions": {
+        "pc_ne_demarre_pas": true,
+        "pas_de_lumiere_led": true
+      },
+      "conclusion": "Panne d'alimentation probable",
+      "solution": "Vérifiez le câble d'alimentation, testez une autre prise et, si possible, un autre bloc d'alimentation.",
+      "confidence": 0.95
+    },
+    {
+      "id": "R02",
+      "category": "Alimentation",
+      "conditions": {
+        "pc_ne_demarre_pas": true,
+        "pas_de_lumiere_led": false,
+        "ventilateur_tourne": false
+      },
+      "conclusion": "Bloc d'alimentation défaillant ou carte mère en panne",
+      "solution": "Testez avec un autre bloc d'alimentation. Si rien ne change, il faut contrôler la carte mère.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R03",
+      "category": "Alimentation",
+      "conditions": {
+        "pc_s_eteint_seul": true,
+        "surchauffe": true
+      },
+      "conclusion": "Arrêt de sécurité lié à une surchauffe",
+      "solution": "Nettoyez les ventilateurs, améliorez la ventilation et remplacez la pâte thermique si nécessaire.",
+      "confidence": 0.92
+    },
+    {
+      "id": "R04",
+      "category": "Écran",
+      "conditions": {
+        "ecran_noir": true,
+        "pc_fonctionne": true,
+        "voyant_ecran_allume": true
+      },
+      "conclusion": "Câble vidéo, sortie vidéo ou carte graphique défaillante",
+      "solution": "Vérifiez le câble vidéo, changez de port ou de moniteur, puis testez la carte graphique.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R05",
+      "category": "Écran",
+      "conditions": {
+        "ecran_noir": true,
+        "pc_fonctionne": true,
+        "voyant_ecran_allume": false
+      },
+      "conclusion": "Moniteur éteint, mal alimenté ou défectueux",
+      "solution": "Contrôlez l'alimentation du moniteur et testez avec un autre écran.",
+      "confidence": 0.9
+    },
+    {
+      "id": "R06",
+      "category": "Écran",
+      "conditions": {
+        "ecran_pixelise": true,
+        "artefacts_visuels": true
+      },
+      "conclusion": "Carte graphique instable ou en surchauffe",
+      "solution": "Surveillez la température GPU, nettoyez la ventilation et mettez à jour le pilote graphique.",
+      "confidence": 0.87
+    },
+    {
+      "id": "R07",
+      "category": "RAM",
+      "conditions": {
+        "ecran_bleu_bsod": true,
+        "redemarrages_aleatoires": true
+      },
+      "conclusion": "Problème probable de mémoire RAM",
+      "solution": "Réinsérez les barrettes, testez-les une par une et lancez un test mémoire.",
+      "confidence": 0.83
+    },
+    {
+      "id": "R08",
+      "category": "RAM",
+      "conditions": {
+        "pc_lent": true,
+        "beaucoup_applications_ouvertes": false,
+        "ram_pleine": true
+      },
+      "conclusion": "Mémoire RAM insuffisante ou saturée",
+      "solution": "Fermez les processus lourds et envisagez une augmentation de RAM si le problème revient souvent.",
+      "confidence": 0.8
+    },
+    {
+      "id": "R09",
+      "category": "Disque dur",
+      "conditions": {
+        "pc_lent": true,
+        "demarrage_lent": true,
+        "bruits_cliquetis": true
+      },
+      "conclusion": "Disque dur mécanique en fin de vie",
+      "solution": "Sauvegardez immédiatement les données et contrôlez l'état du disque avant remplacement.",
+      "confidence": 0.95
+    },
+    {
+      "id": "R10",
+      "category": "Disque dur",
+      "conditions": {
+        "demarrage_lent": true,
+        "bruits_cliquetis": false,
+        "disque_presque_plein": true
+      },
+      "conclusion": "Disque presque saturé, performances dégradées",
+      "solution": "Libérez de l'espace disque, supprimez les fichiers inutiles et déplacez les gros fichiers.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R11",
+      "category": "Disque dur",
+      "conditions": {
+        "fichiers_inaccessibles": true,
+        "erreurs_lecture_ecriture": true
+      },
+      "conclusion": "Erreurs disque ou secteurs défectueux",
+      "solution": "Sauvegardez les données puis lancez une vérification du disque.",
+      "confidence": 0.9
+    },
+    {
+      "id": "R12",
+      "category": "Réseau",
+      "conditions": {
+        "pas_internet": true,
+        "wifi_connecte": true,
+        "autres_appareils_fonctionnent": true
+      },
+      "conclusion": "Problème local de configuration réseau sur ce PC",
+      "solution": "Renouvelez l'adresse IP, videz le cache DNS et vérifiez les paramètres réseau du poste.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R13",
+      "category": "Réseau",
+      "conditions": {
+        "pas_internet": true,
+        "wifi_connecte": false,
+        "signal_wifi_visible": true
+      },
+      "conclusion": "Échec d'authentification Wi‑Fi ou carte réseau instable",
+      "solution": "Vérifiez le mot de passe Wi‑Fi, oubliez le réseau puis reconnectez-le, et mettez à jour le pilote réseau.",
+      "confidence": 0.82
+    },
+    {
+      "id": "R14",
+      "category": "Réseau",
+      "conditions": {
+        "pas_internet": true,
+        "wifi_connecte": false,
+        "signal_wifi_visible": false
+      },
+      "conclusion": "Signal Wi‑Fi absent ou routeur indisponible",
+      "solution": "Redémarrez le routeur, rapprochez-vous du point d'accès et vérifiez si le réseau est bien diffusé.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R15",
+      "category": "Réseau",
+      "conditions": {
+        "internet_lent": true,
+        "wifi_connecte": true,
+        "loin_du_routeur": true
+      },
+      "conclusion": "Signal Wi‑Fi faible",
+      "solution": "Rapprochez-vous du routeur, testez en Ethernet ou utilisez un répéteur Wi‑Fi.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R16",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "ecran_bleu_bsod": true,
+        "redemarrages_aleatoires": false,
+        "pilote_recent_installe": true
+      },
+      "conclusion": "Pilote récent incompatible ou corrompu",
+      "solution": "Revenez au pilote précédent ou réinstallez proprement le pilote officiel.",
+      "confidence": 0.9
+    },
+    {
+      "id": "R17",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "pc_gele": true,
+        "application_specifique": true
+      },
+      "conclusion": "Application instable ou incompatible",
+      "solution": "Mettez à jour ou réinstallez l'application concernée.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R18",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "pc_gele": true,
+        "application_specifique": false,
+        "demarrage_lent": true
+      },
+      "conclusion": "Système ralenti, corrompu ou infecté",
+      "solution": "Analysez le système, vérifiez les programmes au démarrage et contrôlez l'intégrité des fichiers système.",
+      "confidence": 0.82
+    },
+    {
+      "id": "R19",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "erreurs_demarrage": true,
+        "windows_ne_demarre_pas": true
+      },
+      "conclusion": "Fichiers de démarrage corrompus",
+      "solution": "Lancez les outils de réparation du démarrage depuis l'environnement de récupération.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R20",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "mises_a_jour_echouent": true,
+        "espace_disque_suffisant": true
+      },
+      "conclusion": "Service Windows Update ou base de mise à jour corrompus",
+      "solution": "Réinitialisez Windows Update et videz le cache des mises à jour.",
+      "confidence": 0.8
+    },
+    {
+      "id": "R21",
+      "category": "Ventilation",
+      "conditions": {
+        "bruit_ventilateur_fort": true,
+        "surchauffe": true
+      },
+      "conclusion": "Ventilation encrassée ou pâte thermique fatiguée",
+      "solution": "Nettoyez les ventilateurs et vérifiez la dissipation thermique.",
+      "confidence": 0.9
+    },
+    {
+      "id": "R22",
+      "category": "Ventilation",
+      "conditions": {
+        "bruit_ventilateur_fort": true,
+        "surchauffe": false
+      },
+      "conclusion": "Ventilateur usé ou corps étranger",
+      "solution": "Localisez le ventilateur bruyant, nettoyez-le et remplacez-le si nécessaire.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R23",
+      "category": "Périphériques",
+      "conditions": {
+        "clavier_ne_fonctionne_pas": true,
+        "connexion_usb": true
+      },
+      "conclusion": "Problème de clavier USB ou de port USB",
+      "solution": "Testez un autre port USB et essayez le clavier sur un autre PC.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R24",
+      "category": "Périphériques",
+      "conditions": {
+        "souris_ne_fonctionne_pas": true,
+        "connexion_usb": true
+      },
+      "conclusion": "Problème de souris USB ou de port USB",
+      "solution": "Essayez un autre port, nettoyez la souris et testez-la ailleurs si possible.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R25",
+      "category": "Périphériques",
+      "conditions": {
+        "imprimante_ne_fonctionne_pas": true,
+        "visible_dans_windows": false
+      },
+      "conclusion": "Imprimante non reconnue par le système",
+      "solution": "Vérifiez la connexion, relancez le spouleur d'impression et réinstallez le pilote.",
+      "confidence": 0.83
+    },
+    {
+      "id": "R26",
+      "category": "Son",
+      "conditions": {
+        "pas_de_son": true,
+        "pilotes_audio_ok": true,
+        "volume_non_mute": true
+      },
+      "conclusion": "Sortie audio mal sélectionnée ou matériel audio en cause",
+      "solution": "Vérifiez le périphérique audio actif et testez avec un autre casque ou haut-parleur.",
+      "confidence": 0.82
+    },
+    {
+      "id": "R27",
+      "category": "Son",
+      "conditions": {
+        "pas_de_son": true,
+        "volume_non_mute": false
+      },
+      "conclusion": "Son coupé ou volume à zéro",
+      "solution": "Réactivez le son dans le système et dans l'application utilisée.",
+      "confidence": 0.99
+    },
+    {
+      "id": "R28",
+      "category": "Batterie",
+      "conditions": {
+        "batterie_ne_charge_pas": true,
+        "chargeur_fonctionnel": true
+      },
+      "conclusion": "Batterie usée ou port de charge endommagé",
+      "solution": "Testez un autre chargeur compatible et inspectez le port de charge.",
+      "confidence": 0.87
+    },
+    {
+      "id": "R29",
+      "category": "Batterie",
+      "conditions": {
+        "batterie_se_decharge_vite": true,
+        "age_batterie_superieur_3ans": true
+      },
+      "conclusion": "Batterie vieillissante",
+      "solution": "Contrôlez l'état de santé de la batterie et envisagez son remplacement.",
+      "confidence": 0.9
+    },
+    {
+      "id": "R30",
+      "category": "Démarrage",
+      "conditions": {
+        "pc_redemarre_en_boucle": true,
+        "apres_mise_a_jour": true
+      },
+      "conclusion": "Boucle de redémarrage liée à une mise à jour récente",
+      "solution": "Passez par le mode sans échec ou désinstallez la dernière mise à jour problématique.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R31",
+      "category": "Démarrage",
+      "conditions": {
+        "bips_au_demarrage": true,
+        "un_bip_long": true
+      },
+      "conclusion": "Code bip BIOS orienté mémoire RAM",
+      "solution": "Réinsérez les barrettes RAM et testez-les une à une.",
+      "confidence": 0.92
+    },
+    {
+      "id": "R32",
+      "category": "Démarrage",
+      "conditions": {
+        "bips_au_demarrage": true,
+        "plusieurs_bips_courts": true
+      },
+      "conclusion": "Code bip BIOS orienté GPU ou carte mère",
+      "solution": "Vérifiez la carte graphique et les connexions internes.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R33",
+      "category": "Performance",
+      "conditions": {
+        "pc_lent": true,
+        "beaucoup_applications_ouvertes": true
+      },
+      "conclusion": "Surcharge des ressources par trop d'applications ouvertes",
+      "solution": "Fermez les applications inutiles et désactivez les programmes de démarrage non essentiels.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R34",
+      "category": "Performance",
+      "conditions": {
+        "pc_lent": true,
+        "beaucoup_applications_ouvertes": false,
+        "virus_detecte": true
+      },
+      "conclusion": "Lenteur liée à un malware ou un logiciel indésirable",
+      "solution": "Lancez une analyse complète et supprimez les programmes suspects.",
+      "confidence": 0.9
+    },
+    {
+      "id": "R35",
+      "category": "Réseau",
+      "conditions": {
+        "internet_lent": true,
+        "wifi_connecte": true,
+        "loin_du_routeur": false,
+        "beaucoup_appareils_connectes": true
+      },
+      "conclusion": "Débit partagé entre trop d'appareils",
+      "solution": "Réduisez les usages simultanés ou testez la connexion quand moins d'appareils sont connectés.",
+      "confidence": 0.8
+    },
+    {
+      "id": "R36",
+      "category": "Écran",
+      "conditions": {
+        "ecran_scintille": true,
+        "pilote_recent_installe": true
+      },
+      "conclusion": "Scintillement lié à un pilote graphique récent",
+      "solution": "Revenez à la version précédente du pilote graphique.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R37",
+      "category": "Écran",
+      "conditions": {
+        "ecran_scintille": true,
+        "pilote_recent_installe": false
+      },
+      "conclusion": "Câble vidéo, écran ou fréquence d'affichage incorrecte",
+      "solution": "Vérifiez le câble, le moniteur et les paramètres d'affichage.",
+      "confidence": 0.83
+    },
+    {
+      "id": "R38",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "applications_ne_s_ouvrent_pas": true,
+        "message_erreur_dll": true
+      },
+      "conclusion": "Fichier DLL manquant ou corrompu",
+      "solution": "Réparez les fichiers système et réinstallez l'application concernée.",
+      "confidence": 0.87
+    },
+    {
+      "id": "R39",
+      "category": "Périphériques",
+      "conditions": {
+        "usb_non_detecte": true,
+        "autre_usb_fonctionne": true
+      },
+      "conclusion": "Périphérique USB défaillant ou incompatible",
+      "solution": "Testez ce périphérique sur un autre PC et vérifiez s'il nécessite un pilote spécifique.",
+      "confidence": 0.85
+    },
+    {
+      "id": "R40",
+      "category": "Périphériques",
+      "conditions": {
+        "usb_non_detecte": true,
+        "autre_usb_fonctionne": false
+      },
+      "conclusion": "Port USB ou contrôleur USB défaillant",
+      "solution": "Essayez un autre port, puis réinstallez les contrôleurs USB dans le système.",
+      "confidence": 0.82
+    },
+    {
+      "id": "R41",
+      "category": "Réseau",
+      "conditions": {
+        "connexion_coupe_regulierement": true,
+        "wifi_connecte": true
+      },
+      "conclusion": "Instabilité Wi‑Fi liée aux interférences ou à la carte réseau",
+      "solution": "Désactivez l'économie d'énergie de la carte réseau et vérifiez le canal Wi‑Fi du routeur.",
+      "confidence": 0.83
+    },
+    {
+      "id": "R42",
+      "category": "Démarrage",
+      "conditions": {
+        "message_boot_device_not_found": true
+      },
+      "conclusion": "Disque de démarrage non détecté ou ordre de démarrage incorrect",
+      "solution": "Vérifiez la détection du disque dans le BIOS et l'ordre de boot.",
+      "confidence": 0.93
+    },
+    {
+      "id": "R43",
+      "category": "Performance",
+      "conditions": {
+        "jeux_lents": true,
+        "fps_bas": true,
+        "parametres_graphiques_eleves": true
+      },
+      "conclusion": "Paramètres graphiques trop élevés pour la configuration",
+      "solution": "Réduisez les réglages graphiques et mettez à jour le pilote vidéo.",
+      "confidence": 0.88
+    },
+    {
+      "id": "R44",
+      "category": "OS / Logiciel",
+      "conditions": {
+        "bureau_ne_s_affiche_pas": true,
+        "processus_explorer_manquant": true
+      },
+      "conclusion": "Processus Windows Explorer bloqué ou absent",
+      "solution": "Relancez explorer.exe depuis le gestionnaire des tâches ou redémarrez le PC.",
+      "confidence": 0.95
+    },
+    {
+      "id": "R45",
+      "category": "Alimentation",
+      "conditions": {
+        "pc_s_eteint_seul": true,
+        "surchauffe": false,
+        "probleme_alim": true
+      },
+      "conclusion": "Bloc d'alimentation instable ou insuffisant",
+      "solution": "Vérifiez la puissance du bloc d'alimentation et testez-en un autre si possible.",
+      "confidence": 0.87
+    }
+  ]
+}

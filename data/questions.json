@@ -1,0 +1,334 @@
+{
+  "symptom_questions": [
+    {
+      "id": "pc_ne_demarre_pas",
+      "question": "Le problème principal est-il que le PC ne démarre pas du tout ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pas_de_lumiere_led",
+      "question": "Aucun voyant d'alimentation n'est-il allumé sur le PC ?",
+      "type": "boolean"
+    },
+    {
+      "id": "ventilateur_tourne",
+      "question": "Les ventilateurs tournent-ils quand vous appuyez sur le bouton de démarrage ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pc_s_eteint_seul",
+      "question": "Le PC s'éteint-il tout seul pendant l'utilisation ?",
+      "type": "boolean"
+    },
+    {
+      "id": "surchauffe",
+      "question": "Le PC devient-il très chaud juste avant le problème ?",
+      "type": "boolean"
+    },
+    {
+      "id": "ecran_noir",
+      "question": "Le problème principal est-il un écran noir ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pc_fonctionne",
+      "question": "Pendant l'écran noir, le PC semble-t-il quand même fonctionner ?",
+      "type": "boolean"
+    },
+    {
+      "id": "voyant_ecran_allume",
+      "question": "Le voyant du moniteur est-il allumé normalement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "ecran_pixelise",
+      "question": "Voyez-vous une image pixelisée, déformée ou remplie de carrés colorés ?",
+      "type": "boolean"
+    },
+    {
+      "id": "artefacts_visuels",
+      "question": "Des lignes, artefacts ou formes anormales apparaissent-ils à l'écran ?",
+      "type": "boolean"
+    },
+    {
+      "id": "ecran_scintille",
+      "question": "L'écran scintille-t-il ou clignote-t-il ?",
+      "type": "boolean"
+    },
+    {
+      "id": "ecran_bleu_bsod",
+      "question": "Avez-vous un écran bleu (BSOD) ?",
+      "type": "boolean"
+    },
+    {
+      "id": "redemarrages_aleatoires",
+      "question": "Le PC redémarre-t-il ensuite de manière aléatoire ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pc_lent",
+      "question": "Le problème principal est-il que le PC est anormalement lent ?",
+      "type": "boolean"
+    },
+    {
+      "id": "beaucoup_applications_ouvertes",
+      "question": "Beaucoup d'applications ou d'onglets sont-ils ouverts en même temps ?",
+      "type": "boolean"
+    },
+    {
+      "id": "ram_pleine",
+      "question": "Le gestionnaire des tâches montre-t-il une RAM presque saturée ?",
+      "type": "boolean"
+    },
+    {
+      "id": "demarrage_lent",
+      "question": "Le démarrage du système est-il beaucoup plus lent que d'habitude ?",
+      "type": "boolean"
+    },
+    {
+      "id": "bruits_cliquetis",
+      "question": "Entendez-vous des cliquetis ou bruits mécaniques inhabituels venant du disque ?",
+      "type": "boolean"
+    },
+    {
+      "id": "disque_presque_plein",
+      "question": "Le disque système est-il presque plein ?",
+      "type": "boolean"
+    },
+    {
+      "id": "fichiers_inaccessibles",
+      "question": "Des fichiers ou dossiers sont-ils devenus inaccessibles ?",
+      "type": "boolean"
+    },
+    {
+      "id": "erreurs_lecture_ecriture",
+      "question": "Avez-vous des erreurs de lecture ou d'écriture sur des fichiers ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pas_internet",
+      "question": "Le problème principal est-il que ce PC n'a pas accès à Internet ?",
+      "type": "boolean"
+    },
+    {
+      "id": "wifi_connecte",
+      "question": "Le PC indique-t-il qu'il est connecté au Wi‑Fi ?",
+      "type": "boolean"
+    },
+    {
+      "id": "autres_appareils_fonctionnent",
+      "question": "D'autres appareils sur ce même réseau arrivent-ils à aller sur Internet ?",
+      "type": "boolean"
+    },
+    {
+      "id": "signal_wifi_visible",
+      "question": "Le réseau Wi‑Fi apparaît-il dans la liste des réseaux disponibles ?",
+      "type": "boolean"
+    },
+    {
+      "id": "internet_lent",
+      "question": "Internet fonctionne-t-il mais très lentement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "loin_du_routeur",
+      "question": "Le PC est-il loin du routeur ou séparé par plusieurs murs ?",
+      "type": "boolean"
+    },
+    {
+      "id": "beaucoup_appareils_connectes",
+      "question": "Beaucoup d'appareils utilisent-ils le Wi‑Fi en même temps ?",
+      "type": "boolean"
+    },
+    {
+      "id": "connexion_coupe_regulierement",
+      "question": "La connexion Wi‑Fi se coupe-t-elle régulièrement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pilote_recent_installe",
+      "question": "Le problème est-il apparu après un pilote ou une mise à jour récente ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pc_gele",
+      "question": "Le PC se fige-t-il complètement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "application_specifique",
+      "question": "Le problème se produit-il surtout avec une seule application ?",
+      "type": "boolean"
+    },
+    {
+      "id": "erreurs_demarrage",
+      "question": "Voyez-vous un message d'erreur au démarrage du PC ?",
+      "type": "boolean"
+    },
+    {
+      "id": "windows_ne_demarre_pas",
+      "question": "Windows ne démarre-t-il pas complètement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "mises_a_jour_echouent",
+      "question": "Les mises à jour système échouent-elles de manière répétée ?",
+      "type": "boolean"
+    },
+    {
+      "id": "espace_disque_suffisant",
+      "question": "Avez-vous encore suffisamment d'espace libre sur le disque système ?",
+      "type": "boolean"
+    },
+    {
+      "id": "bruit_ventilateur_fort",
+      "question": "Les ventilateurs font-ils un bruit anormalement fort ?",
+      "type": "boolean"
+    },
+    {
+      "id": "clavier_ne_fonctionne_pas",
+      "question": "Le clavier ne répond-il plus correctement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "connexion_usb",
+      "question": "Le périphérique concerné est-il branché en USB ?",
+      "type": "boolean"
+    },
+    {
+      "id": "souris_ne_fonctionne_pas",
+      "question": "La souris ne répond-elle plus correctement ?",
+      "type": "boolean"
+    },
+    {
+      "id": "imprimante_ne_fonctionne_pas",
+      "question": "L'imprimante ne répond-elle pas aux demandes d'impression ?",
+      "type": "boolean"
+    },
+    {
+      "id": "visible_dans_windows",
+      "question": "L'imprimante apparaît-elle dans Windows ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pas_de_son",
+      "question": "Le problème principal est-il l'absence totale de son ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pilotes_audio_ok",
+      "question": "Les pilotes audio semblent-ils détectés normalement par le système ?",
+      "type": "boolean"
+    },
+    {
+      "id": "volume_non_mute",
+      "question": "Le son est-il bien activé et non coupé ?",
+      "type": "boolean"
+    },
+    {
+      "id": "batterie_ne_charge_pas",
+      "question": "La batterie refuse-t-elle de charger ?",
+      "type": "boolean"
+    },
+    {
+      "id": "chargeur_fonctionnel",
+      "question": "Le chargeur fonctionne-t-il avec un autre appareil compatible ?",
+      "type": "boolean"
+    },
+    {
+      "id": "batterie_se_decharge_vite",
+      "question": "La batterie se décharge-t-elle beaucoup trop vite ?",
+      "type": "boolean"
+    },
+    {
+      "id": "age_batterie_superieur_3ans",
+      "question": "La batterie a-t-elle plus de 3 ans ?",
+      "type": "boolean"
+    },
+    {
+      "id": "pc_redemarre_en_boucle",
+      "question": "Le PC redémarre-t-il en boucle sans atteindre le bureau ?",
+      "type": "boolean"
+    },
+    {
+      "id": "apres_mise_a_jour",
+      "question": "Le problème a-t-il commencé juste après une mise à jour ?",
+      "type": "boolean"
+    },
+    {
+      "id": "bips_au_demarrage",
+      "question": "Entendez-vous des bips au démarrage ?",
+      "type": "boolean"
+    },
+    {
+      "id": "un_bip_long",
+      "question": "S'agit-il d'un long bip ou de longs bips répétés ?",
+      "type": "boolean"
+    },
+    {
+      "id": "plusieurs_bips_courts",
+      "question": "Entendez-vous plusieurs bips courts successifs ?",
+      "type": "boolean"
+    },
+    {
+      "id": "message_boot_device_not_found",
+      "question": "Un message 'Boot device not found' ou similaire apparaît-il ?",
+      "type": "boolean"
+    },
+    {
+      "id": "virus_detecte",
+      "question": "Un antivirus a-t-il récemment détecté une menace ?",
+      "type": "boolean"
+    },
+    {
+      "id": "jeux_lents",
+      "question": "Le problème concerne-t-il surtout les jeux vidéo ou applications 3D ?",
+      "type": "boolean"
+    },
+    {
+      "id": "fps_bas",
+      "question": "Le nombre d'images par seconde (FPS) est-il anormalement bas ?",
+      "type": "boolean"
+    },
+    {
+      "id": "parametres_graphiques_eleves",
+      "question": "Les paramètres graphiques sont-ils réglés très haut ?",
+      "type": "boolean"
+    },
+    {
+      "id": "bureau_ne_s_affiche_pas",
+      "question": "Après la connexion, le bureau Windows ne s'affiche-t-il pas ?",
+      "type": "boolean"
+    },
+    {
+      "id": "processus_explorer_manquant",
+      "question": "Dans le gestionnaire des tâches, explorer.exe semble-t-il absent ?",
+      "type": "boolean"
+    },
+    {
+      "id": "probleme_alim",
+      "question": "Pensez-vous que l'alimentation soit insuffisante ou instable ?",
+      "type": "boolean"
+    },
+    {
+      "id": "usb_non_detecte",
+      "question": "Un périphérique USB n'est-il pas détecté ?",
+      "type": "boolean"
+    },
+    {
+      "id": "autre_usb_fonctionne",
+      "question": "D'autres périphériques USB fonctionnent-ils sur ce même port ?",
+      "type": "boolean"
+    },
+    {
+      "id": "applications_ne_s_ouvrent_pas",
+      "question": "Des applications refusent-elles de s'ouvrir ?",
+      "type": "boolean"
+    },
+    {
+      "id": "message_erreur_dll",
+      "question": "Un message d'erreur mentionnant un fichier DLL apparaît-il ?",
+      "type": "boolean"
+    }
+  ]
+}
