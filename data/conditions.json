@@ -12,7 +12,7 @@
         "pc_ne_demarre_pas": true,
         "pc_fonctionne": true
       },
-      "message": "Incoherence: vous avez indique que le PC ne demarre pas mais qu'il fonctionne."
+      "message": "Incohérence : vous avez indiqué que le PC ne démarre pas, mais qu'il semble fonctionner."
     },
     {
       "id": "INC002",
@@ -20,7 +20,7 @@
         "ecran_noir": true,
         "artefacts_visuels": true
       },
-      "message": "Incoherence: ecran noir complet et artefacts visuels ne vont pas ensemble."
+      "message": "Incohérence : écran noir complet et artefacts visuels ne vont pas ensemble."
     },
     {
       "id": "INC003",
@@ -28,7 +28,7 @@
         "pas_internet": true,
         "internet_lent": true
       },
-      "message": "Incoherence: absence totale d'Internet et lenteur Internet ne decrivent pas le meme etat."
+      "message": "Incohérence : absence totale d'Internet et lenteur Internet ne décrivent pas le même état."
     },
     {
       "id": "INC004",
@@ -36,7 +36,7 @@
         "pc_ne_demarre_pas": true,
         "pas_internet": true
       },
-      "message": "Incoherence: un PC qui ne demarre pas ne peut pas etre diagnostique comme 'pas Internet' au meme moment."
+      "message": "Incohérence : un PC qui ne démarre pas ne peut pas avoir un problème Internet indépendant."
     },
     {
       "id": "INC005",
@@ -44,7 +44,7 @@
         "pc_ne_demarre_pas": true,
         "pc_lent": true
       },
-      "message": "Incoherence: si le PC ne demarre pas, le symptome 'PC lent' n'est pas prioritaire."
+      "message": "Incohérence : si le PC ne démarre pas, le symptôme « PC lent » n'est pas pertinent."
     },
     {
       "id": "INC006",
@@ -52,7 +52,23 @@
         "pc_ne_demarre_pas": true,
         "ecran_bleu_bsod": true
       },
-      "message": "Incoherence: un BSOD suppose que le systeme a deja demarre partiellement."
+      "message": "Incohérence : un BSOD suppose que le système a déjà démarré partiellement."
+    },
+    {
+      "id": "INC007",
+      "if": {
+        "pc_ne_demarre_pas": true,
+        "pc_gele": true
+      },
+      "message": "Incohérence : un PC qui ne démarre pas ne peut pas se figer pendant l'utilisation."
+    },
+    {
+      "id": "INC008",
+      "if": {
+        "wifi_connecte": true,
+        "signal_wifi_visible": false
+      },
+      "message": "Incohérence : le PC est connecté au Wi‑Fi mais le réseau n'est pas visible dans la liste."
     }
   ]
 }

@@ -6,6 +6,8 @@ Cette logique vit ici, en Python, à partir de trois fichiers JSON :
 - data/rules.json
 - data/questions.json
 - data/interview_flow.json
+- data/dependencies.json
+- data/conditions.json
 """
 
 from __future__ import annotations
@@ -105,6 +107,7 @@ class KnowledgeBase:
                 continue
             if set(conditions).issubset(known_questions):
                 self.inconsistency_rules.append(inconsistency)
+
         self.priority_index = {
             question_id: index for index, question_id in enumerate(self.priority_order)
         }
@@ -114,7 +117,6 @@ class KnowledgeBase:
                 question_id for question_id in configured_roots if question_id in known_questions
             }
         else:
-            # Fallback: les symptômes de screening sont traités comme racines.
             self.root_symptoms = set(self.screening_order)
 
         raw_rule_dependencies = dependencies_data.get("rule_dependencies", {})
@@ -130,36 +132,20 @@ class KnowledgeBase:
                 roots = self._infer_rule_roots_from_conditions(rule.get("conditions", {}))
             self.rule_roots[rule_id] = roots
 
-        self.min_answers = int(self.settings.get("min_answers", 5))
+        self.min_answers = int(self.settings.get("min_answers", 3))
         self.max_diagnoses = int(self.settings.get("max_diagnoses", 5))
-        self.max_questions = int(self.settings.get("max_questions", 18))
+        self.max_questions = int(self.settings.get("max_questions", 0))
 
         self._validate()
 
     def _validate(self) -> None:
         known_questions = set(self.symptom_questions)
-
         for rule in self.rules:
             unknown = set(rule["conditions"]) - known_questions
             if unknown:
                 raise ValueError(
                     f"Règle {rule['id']} avec symptômes inconnus: {sorted(unknown)}"
                 )
-
-        for question_id, triggers in self.question_triggers.items():
-            if question_id not in known_questions:
-                continue
-            for trigger in triggers:
-                if trigger["question"] not in known_questions:
-                    continue
-
-        for question_id, dependencies in self.dependencies.items():
-            if question_id not in known_questions:
-                continue
-            for dependency in dependencies:
-                dependency_question = dependency.get("question")
-                if dependency_question not in known_questions:
-                    continue
 
     def get_rule(self, rule_id: str) -> dict | None:
         for rule in self.rules:
@@ -172,17 +158,30 @@ class KnowledgeBase:
 
     @lru_cache(maxsize=None)
     def infer_question_roots(self, question_id: str) -> tuple[str, ...]:
+        """
+        Remonte la chaîne de dépendances pour trouver les symptômes racines
+        associés à cette question, quelle que soit la valeur de la dépendance
+        (True ou False). Cela garantit que les questions dérivées d'une branche
+        exclue (ex : wifi si pc_ne_demarre_pas=True) sont bien bloquées.
+        """
         if question_id in self.root_symptoms:
             return (question_id,)
 
         roots: set[str] = set()
         for dependency in self.dependencies.get(question_id, []):
             parent_question = dependency.get("question")
-            # Pour déterminer la branche logique, on ne remonte que les prérequis positifs.
-            if dependency.get("value") is not True:
+            if parent_question not in self.symptom_questions:
                 continue
-            if parent_question in self.symptom_questions:
-                roots.update(self.infer_question_roots(parent_question))
+            # On remonte toutes les dépendances (positives ET négatives)
+            # pour couvrir les exclusions logiques comme :
+            #   pas_internet dépend de (pc_ne_demarre_pas = false)
+            # Sans ça, wifi_connecte n'a pas de racine inférée et passe
+            # le filtre de branche par erreur.
+            if parent_question in self.root_symptoms:
+                roots.add(parent_question)
+            else:
+                parent_roots = self.infer_question_roots(parent_question)
+                roots.update(parent_roots)
 
         return tuple(sorted(roots))
 
@@ -288,15 +287,110 @@ class InferenceEngine:
                 "contradicted_conditions": [],
             }
 
-        confidence = base_confidence * (1 - 0.1 * len(unknown_conditions))
+        unknown_penalty = float(self.kb.settings.get("unknown_penalty", 0.1))
+        confidence = base_confidence * (1 - unknown_penalty * len(unknown_conditions))
         return {
             "rule": rule,
             "matched": True,
-            "confidence": round(confidence, 2),
+            "confidence": round(max(0.0, confidence), 2),
             "matched_conditions": matched_conditions,
             "unknown_conditions": unknown_conditions,
             "contradicted_conditions": [],
         }
+
+    def get_active_roots(self, fact_base: FactBase) -> set[str]:
+        """Retourne les symptômes racines confirmés comme True par l'utilisateur."""
+        return {
+            root_id
+            for root_id in self.kb.root_symptoms
+            if fact_base.get(root_id) is True
+        }
+
+    def get_excluded_roots(self, fact_base: FactBase) -> set[str]:
+        """Retourne les symptômes racines explicitement niés (False)."""
+        return {
+            root_id
+            for root_id in self.kb.root_symptoms
+            if fact_base.get(root_id) is False
+        }
+
+    def is_question_in_active_branch(self, question_id: str, fact_base: FactBase) -> bool:
+        """
+        Vérifie qu'une question est cohérente avec l'état courant de la base de faits.
+
+        La méthode are_dependencies_satisfied() fait le vrai travail de filtrage
+        (elle vérifie chaque dépendance directe ligne par ligne). Cette méthode
+        ajoute un filtre de branche racine pour bloquer les questions dont TOUTES
+        les racines ont été explicitement niées — ce qui couvre le cas :
+            "si pc_ne_demarre_pas=True, ne pas poser wifi/internet"
+        car infer_question_roots remonte maintenant les dépendances négatives.
+        """
+        excluded_roots = self.get_excluded_roots(fact_base)
+        active_roots = self.get_active_roots(fact_base)
+        question_roots = set(self.kb.infer_question_roots(question_id))
+
+        # Question racine (screening) sans dépendances inférées : toujours autorisée.
+        if not question_roots:
+            return True
+
+        # Si toutes les racines inférées de la question sont exclues → bloqué.
+        # Exemple : pas_internet hérite de pc_ne_demarre_pas ; si pc_ne_demarre_pas=True
+        # alors pc_ne_demarre_pas ∈ excluded_roots et pas_internet est bloqué.
+        if question_roots.issubset(excluded_roots):
+            return False
+
+        # Si des racines positives sont actives (ex : pc_ne_demarre_pas=True),
+        # on n'autorise que les questions dont au moins une racine correspond.
+        if active_roots:
+            return bool(question_roots.intersection(active_roots))
+
+        return True
+
+    def are_dependencies_satisfied(self, question_id: str, fact_base: FactBase) -> bool:
+        """
+        Vérifie que toutes les dépendances fortes d'une question sont satisfaites.
+        Une dépendance non satisfaite signifie que la question ne doit pas encore être posée.
+        """
+        dependencies = self.kb.dependencies.get(question_id)
+        if not dependencies:
+            return True
+
+        for dependency in dependencies:
+            dependency_question = dependency["question"]
+            if dependency_question not in self.kb.symptom_questions:
+                continue
+            dependency_value = dependency["value"]
+            actual = fact_base.get(dependency_question)
+            if actual != dependency_value:
+                return False
+
+        return True
+
+    def is_question_triggered(self, question_id: str, fact_base: FactBase) -> bool:
+        """
+        Vérifie qu'au moins un trigger de la question est activé.
+        Les questions sans trigger sont toujours déclenchées.
+        """
+        triggers = self.kb.question_triggers.get(question_id)
+        if not triggers:
+            return True
+        for trigger in triggers:
+            trigger_question = trigger["question"]
+            if trigger_question not in self.kb.symptom_questions:
+                continue
+            if fact_base.get(trigger_question) == trigger["value"]:
+                return True
+        return False
+
+    def can_ask_question(self, question_id: str, fact_base: FactBase) -> bool:
+        """Vérifie toutes les conditions pour poser une question."""
+        if question_id in fact_base.facts:
+            return False
+        return (
+            self.is_question_triggered(question_id, fact_base)
+            and self.are_dependencies_satisfied(question_id, fact_base)
+            and self.is_question_in_active_branch(question_id, fact_base)
+        )
 
     def get_candidate_evaluations(self, fact_base: FactBase) -> list[dict]:
         active_roots = self.get_active_roots(fact_base)
@@ -313,52 +407,6 @@ class InferenceEngine:
             if not evaluation["contradicted_conditions"]:
                 evaluations.append(evaluation)
         return evaluations
-
-    def get_active_roots(self, fact_base: FactBase) -> set[str]:
-        return {
-            root_id
-            for root_id in self.kb.root_symptoms
-            if fact_base.get(root_id) is True
-        }
-
-    def is_question_in_active_branch(self, question_id: str, fact_base: FactBase) -> bool:
-        active_roots = self.get_active_roots(fact_base)
-        if not active_roots:
-            return True
-
-        question_roots = set(self.kb.infer_question_roots(question_id))
-        if not question_roots:
-            # Une question sans branche explicite ne doit pas échapper au filtrage strict.
-            return False
-        return bool(question_roots.intersection(active_roots))
-
-    def is_question_triggered(self, question_id: str, fact_base: FactBase) -> bool:
-        triggers = self.kb.question_triggers.get(question_id)
-        if not triggers:
-            return True
-        for trigger in triggers:
-            trigger_question = trigger["question"]
-            if trigger_question not in self.kb.symptom_questions:
-                continue
-            if fact_base.get(trigger_question) == trigger["value"]:
-                return True
-        return False
-
-    def are_dependencies_satisfied(self, question_id: str, fact_base: FactBase) -> bool:
-        dependencies = self.kb.dependencies.get(question_id)
-        if not dependencies:
-            return True
-
-        # Dépendances fortes: on ne pose pas la question tant que les prérequis ne sont pas validés.
-        for dependency in dependencies:
-            dependency_question = dependency["question"]
-            if dependency_question not in self.kb.symptom_questions:
-                continue
-            dependency_value = dependency["value"]
-            if fact_base.get(dependency_question) != dependency_value:
-                return False
-
-        return True
 
     def question_priority(self, question_id: str) -> int:
         return self.kb.priority_index.get(question_id, len(self.kb.priority_order) + 100)
@@ -386,55 +434,42 @@ class InferenceEngine:
         answered = set(fact_base.facts)
         evaluations = self.get_candidate_evaluations(fact_base)
 
+        # Priorité 1 : questions de follow-up liées aux règles candidates actives.
         follow_up_candidates: set[str] = set()
         for evaluation in evaluations:
             for symptom_id in evaluation["unknown_conditions"]:
-                if symptom_id in answered:
-                    continue
-                if self.is_question_triggered(
-                    symptom_id, fact_base
-                ) and self.are_dependencies_satisfied(
-                    symptom_id, fact_base
-                ) and self.is_question_in_active_branch(symptom_id, fact_base):
+                if symptom_id not in answered and self.can_ask_question(symptom_id, fact_base):
                     follow_up_candidates.add(symptom_id)
 
         if follow_up_candidates:
             return max(
                 follow_up_candidates,
-                key=lambda symptom_id: (
-                    self.score_question(symptom_id, evaluations),
-                    -self.question_priority(symptom_id),
-                    symptom_id,
+                key=lambda sid: (
+                    self.score_question(sid, evaluations),
+                    -self.question_priority(sid),
+                    sid,
                 ),
             )
 
+        # Priorité 2 : questions de screening non encore posées dans la branche active.
         for symptom_id in self.kb.screening_order:
-            if symptom_id in answered:
-                continue
-            if self.is_question_triggered(
-                symptom_id, fact_base
-            ) and self.are_dependencies_satisfied(
-                symptom_id, fact_base
-            ) and self.is_question_in_active_branch(symptom_id, fact_base):
+            if self.can_ask_question(symptom_id, fact_base):
                 return symptom_id
 
+        # Priorité 3 : toute question restante dans la branche active et pertinente.
         remaining_candidates: set[str] = set()
         for evaluation in evaluations:
             for symptom_id in evaluation["rule"]["conditions"]:
-                if symptom_id not in answered and self.is_question_triggered(
-                    symptom_id, fact_base
-                ) and self.are_dependencies_satisfied(
-                    symptom_id, fact_base
-                ) and self.is_question_in_active_branch(symptom_id, fact_base):
+                if self.can_ask_question(symptom_id, fact_base):
                     remaining_candidates.add(symptom_id)
 
         if remaining_candidates:
             return max(
                 remaining_candidates,
-                key=lambda symptom_id: (
-                    self.score_question(symptom_id, evaluations),
-                    -self.question_priority(symptom_id),
-                    symptom_id,
+                key=lambda sid: (
+                    self.score_question(sid, evaluations),
+                    -self.question_priority(sid),
+                    sid,
                 ),
             )
 
@@ -483,11 +518,11 @@ class InferenceEngine:
                 if actual is None:
                     status = "?"
                 elif actual == expected:
-                    status = "OK"
+                    status = "✓"
                 else:
-                    status = "NON"
+                    status = "✗"
                 lines.append(
-                    f" - {status} {question_text} (attendu: {'oui' if expected else 'non'})"
+                    f"  {status} {question_text} (attendu : {'OUI' if expected else 'NON'})"
                 )
 
         lines.extend(
@@ -520,6 +555,7 @@ class InferenceEngine:
                     break
             if matches:
                 messages.append(contradiction["message"])
+
         return messages
 
     def build_interview_state(self, fact_base: FactBase) -> dict:
@@ -587,11 +623,13 @@ def run_cli_session() -> None:
         return
 
     if not diagnoses:
-        print("Aucun diagnostic clair.")
+        print("Aucun diagnostic clair. Essayez de répondre à plus de questions.")
         return
 
     for index, diagnosis in enumerate(diagnoses, 1):
-        print(f"{index}. {diagnosis['conclusion']} ({int(diagnosis['confidence'] * 100)}%)")
+        print(f"\n{index}. [{diagnosis['category']}] {diagnosis['conclusion']}")
+        print(f"   Confiance : {int(diagnosis['confidence'] * 100)}%")
+        print(f"   Solution  : {diagnosis['solution']}")
 
 
 if __name__ == "__main__":

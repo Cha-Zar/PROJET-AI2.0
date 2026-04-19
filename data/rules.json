@@ -218,6 +218,7 @@
       "id": "R19",
       "category": "OS / Logiciel",
       "conditions": {
+        "pc_ne_demarre_pas": true,
         "erreurs_demarrage": true,
         "windows_ne_demarre_pas": true
       },

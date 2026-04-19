@@ -298,6 +298,19 @@
 .progress-count { font-family: var(--mono); font-size: 13px; color: var(--accent); }
 .progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
+
+  /* ── Reasoning Chain (chaînage avant) ── */
+  .reasoning-block { margin-top: 20px; }
+  .reasoning-label { font-family: var(--mono); font-size: 10px; color: var(--accent2); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  .reasoning-chain { background: var(--surface2); border-radius: 8px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .chain-step { display: flex; align-items: flex-start; gap: 10px; font-family: var(--mono); font-size: 12px; flex-wrap: wrap; }
+  .chain-kw { color: var(--accent2); font-weight: 700; min-width: 26px; font-size: 11px; padding-top: 1px; }
+  .chain-kw.alors { color: var(--accent); min-width: 42px; }
+  .chain-fact { color: var(--text-dim); flex: 1; min-width: 160px; }
+  .chain-eq { color: var(--text-muted); margin: 0 2px; }
+  .chain-icon { margin-left: auto; font-size: 13px; }
+  .chain-conclusion { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 13px; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; flex-wrap: wrap; }
+  /* ── Progress bar (fix duplication) ── */
 </style>
 </head>
 <body>
@@ -322,9 +335,9 @@
 <div class="notif" id="notif"></div>
 
 <script>
-let MIN_ANSWERS = 5;
+let MIN_ANSWERS = 5;  // sera écrasé par /api/bootstrap
 let MAX_DIAGNOSES = 5;
-let MAX_QUESTIONS = 18;
+let MAX_QUESTIONS = 0;  // 0 = illimité, sera écrasé par /api/bootstrap
 
 let state = {
   screen: 'loading',
@@ -534,19 +547,49 @@ function renderDiagnose() {
     `;
   }
 
+  // Déduire la branche active depuis la question courante
+  const qId = state.currentQuestion ? state.currentQuestion.id : '';
+  const branchMap = {
+    'pc_ne_demarre_pas':'Démarrage', 'pas_de_lumiere_led':'Alimentation',
+    'ventilateur_tourne':'Alimentation', 'bips_au_demarrage':'BIOS/POST',
+    'erreurs_demarrage':'Démarrage OS', 'windows_ne_demarre_pas':'Démarrage OS',
+    'pc_redemarre_en_boucle':'Démarrage', 'ecran_noir':'Écran',
+    'pc_fonctionne':'Écran', 'voyant_ecran_allume':'Écran',
+    'ecran_pixelise':'Carte graphique', 'artefacts_visuels':'Carte graphique',
+    'ecran_scintille':'Écran/Pilote', 'pas_internet':'Réseau',
+    'wifi_connecte':'Réseau Wi-Fi', 'signal_wifi_visible':'Réseau Wi-Fi',
+    'internet_lent':'Réseau', 'connexion_coupe_regulierement':'Réseau',
+    'pc_lent':'Performance', 'demarrage_lent':'Performance/Disque',
+    'bruits_cliquetis':'Disque dur', 'ram_pleine':'RAM',
+    'ecran_bleu_bsod':'BSOD/Mémoire', 'pc_gele':'Système/Logiciel',
+    'pc_s_eteint_seul':'Alimentation/Thermique', 'surchauffe':'Ventilation',
+    'pas_de_son':'Audio', 'batterie_ne_charge_pas':'Batterie',
+    'batterie_se_decharge_vite':'Batterie', 'jeux_lents':'GPU/Performance',
+    'clavier_ne_fonctionne_pas':'Périphériques', 'souris_ne_fonctionne_pas':'Périphériques',
+    'usb_non_detecte':'USB', 'imprimante_ne_fonctionne_pas':'Impression',
+    'applications_ne_s_ouvrent_pas':'Logiciel', 'bureau_ne_s_affiche_pas':'OS',
+    'mises_a_jour_echouent':'OS/Mises à jour'
+  };
+  const branchLabel = branchMap[qId] || 'Analyse générale';
+
   return `
     <div class="progress-container">
       <div class="progress-header">
         <div class="progress-label">// Progression diagnostic</div>
-        <div class="progress-count">Question ${answered + 1} / ${safeMaxQuestions} · Règles restantes: ${state.remainingRulesCount}</div>
+        <div class="progress-count">Question ${answered + 1} · Règles candidates: ${state.remainingRulesCount}</div>
       </div>
       <div class="progress-bar">
-        <div class="progress-fill" style="width:${progress}%"></div>
+        <div class="progress-fill" style="width:${Math.min((state.remainingRulesCount > 0 ? (1 - state.remainingRulesCount / Math.max(state.rules.length,1)) : 0.5) * 100, 95)}%"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);">// BRANCHE ACTIVE :</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--accent);padding:2px 10px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);border-radius:4px;">${branchLabel}</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-left:auto;">${answered} réponse${answered>1?'s':''} collectée${answered>1?'s':''}</span>
       </div>
     </div>
     <div class="question-section">
       <div class="question-card">
-        <div class="question-num">// SYMPTÔME_${String(answered + 1).padStart(3, '0')}</div>
+        <div class="question-num">// SYMPTÔME_${String(answered + 1).padStart(3, '0')} · ${branchLabel.toUpperCase()}</div>
         <div class="question-text">${state.currentQuestion.question}</div>
         <div class="answer-buttons">
           <button class="answer-btn yes" onclick="answer('${state.currentQuestion.id}','yes')">✓ OUI</button>
@@ -610,15 +653,30 @@ function renderDiagCard(diag, i) {
   const pct = Math.round((diag.confidence || 0) * 100);
   const cls = pct >= 85 ? 'high' : pct >= 70 ? 'med' : 'low';
   const fillCls = `fill-${cls}`;
+
+  // Construire le raisonnement chaîné (chaînage avant)
+  const condEntries = Object.entries(diag.conditions || {});
+  const matchedConds = condEntries.filter(([sid, expected]) => state.facts[sid] === expected);
+  const unknownConds = condEntries.filter(([sid]) => state.facts[sid] === null || state.facts[sid] === undefined);
+
+  // Génère la chaîne logique SI ... ET ... ALORS
+  const raisonSteps = condEntries.map(([sid, expected], idx) => {
+    const actual = state.facts[sid];
+    const icon = actual === undefined || actual === null ? '❓' : (actual === expected ? '✅' : '❌');
+    const keyword = idx === 0 ? 'SI' : 'ET';
+    const val = expected ? '<span style="color:var(--success)">OUI</span>' : '<span style="color:var(--danger)">NON</span>';
+    return `<div class="chain-step"><span class="chain-kw">${keyword}</span><span class="chain-fact">${QUESTIONS[sid] || sid}</span><span class="chain-eq">→</span>${val}<span class="chain-icon">${icon}</span></div>`;
+  }).join('');
+
   return `
     <div class="diagnosis-card ${i === 0 ? 'top' : ''}">
       <div class="diagnosis-header" onclick="toggleDiagCard('card-${i}', 'chev-${i}')">
-        <div>
+        <div class="diagnosis-left">
           <div class="diagnosis-rank">${i === 0 ? '🏆 DIAGNOSTIC PRINCIPAL' : `#${i + 1} DIAGNOSTIC`} · ${diag.rule_id}</div>
           <div class="diagnosis-conclusion">${diag.conclusion}</div>
-          <div class="diagnosis-category">Catégorie : ${diag.category}</div>
+          <div class="diagnosis-category">Catégorie : ${diag.category} · ${matchedConds.length}/${condEntries.length} conditions confirmées</div>
         </div>
-        <div>
+        <div class="confidence-block">
           <div class="confidence-value ${cls}">${pct}%</div>
           <div class="confidence-label">Confiance</div>
           <div class="confidence-bar"><div class="confidence-fill ${fillCls}" style="width:${pct}%"></div></div>
@@ -626,15 +684,21 @@ function renderDiagCard(diag, i) {
         </div>
       </div>
       <div class="diagnosis-body ${i === 0 ? 'open' : ''}" id="card-${i}">
-        <div class="solution-block"><div class="solution-label">💡 Solution recommandée</div><div class="solution-text">${diag.solution}</div></div>
-        <div class="conditions-block">
-          <div class="conditions-label">🔍 Conditions évaluées</div>
-          <div class="conditions-list">${Object.entries(diag.conditions || {}).map(([sid, expected]) => {
-            const actual = state.facts[sid];
-            const icon = actual === undefined || actual === null ? '❓' : (actual === expected ? '✅' : '❌');
-            return `<div class="condition-item"><span class="cond-icon">${icon}</span><span>${QUESTIONS[sid] || sid}</span><span style="margin-left:auto;">→ ${expected ? 'OUI' : 'NON'}</span></div>`;
-          }).join('')}</div>
+        <div class="solution-block">
+          <div class="solution-label">💡 Solution recommandée</div>
+          <div class="solution-text">${diag.solution}</div>
         </div>
+        <div class="reasoning-block">
+          <div class="reasoning-label">🧠 Raisonnement par chaînage avant</div>
+          <div class="reasoning-chain">
+            ${raisonSteps}
+            <div class="chain-conclusion">
+              <span class="chain-kw alors">ALORS</span>
+              <span style="color:var(--accent);font-weight:700;">${diag.conclusion}</span>
+            </div>
+          </div>
+        </div>
+        ${unknownConds.length > 0 ? `<div style="font-family:var(--mono);font-size:11px;color:var(--accent3);margin-top:12px;">⚠ ${unknownConds.length} condition(s) non vérifiée(s) — confiance réduite de ${Math.round(unknownConds.length * 10)}%</div>` : ''}
       </div>
     </div>
   `;
