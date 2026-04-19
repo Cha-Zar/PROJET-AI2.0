@@ -25,131 +25,288 @@
   ],
   "dependencies": {
     "ecran_noir": [
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "pas_internet": [
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "internet_lent": [
-      {"question": "pas_internet", "value": false},
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pas_internet",
+        "value": false
+      },
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "pc_lent": [
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "ecran_bleu_bsod": [
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "pc_gele": [
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "pc_s_eteint_seul": [
-      {"question": "pc_ne_demarre_pas", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
-
     "pas_de_lumiere_led": [
-      {"question": "pc_ne_demarre_pas", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": true
+      }
     ],
     "ventilateur_tourne": [
-      {"question": "pc_ne_demarre_pas", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": true
+      }
     ],
     "bips_au_demarrage": [
-      {"question": "pc_ne_demarre_pas", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": true
+      }
     ],
     "un_bip_long": [
-      {"question": "bips_au_demarrage", "value": true}
+      {
+        "question": "bips_au_demarrage",
+        "value": true
+      }
     ],
     "plusieurs_bips_courts": [
-      {"question": "bips_au_demarrage", "value": true}
+      {
+        "question": "bips_au_demarrage",
+        "value": true
+      }
     ],
     "pc_redemarre_en_boucle": [
-      {"question": "pc_ne_demarre_pas", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": true
+      }
     ],
     "apres_mise_a_jour": [
-      {"question": "pc_redemarre_en_boucle", "value": true}
+      {
+        "question": "pc_redemarre_en_boucle",
+        "value": true
+      }
     ],
-
     "pc_fonctionne": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "ecran_noir", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "ecran_noir",
+        "value": true
+      }
     ],
     "voyant_ecran_allume": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "ecran_noir", "value": true},
-      {"question": "pc_fonctionne", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "ecran_noir",
+        "value": true
+      },
+      {
+        "question": "pc_fonctionne",
+        "value": true
+      }
     ],
     "ecran_scintille": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "ecran_noir", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "ecran_noir",
+        "value": false
+      }
     ],
     "ecran_pixelise": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "ecran_noir", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "ecran_noir",
+        "value": false
+      }
     ],
     "artefacts_visuels": [
-      {"question": "ecran_pixelise", "value": true}
+      {
+        "question": "ecran_pixelise",
+        "value": true
+      }
     ],
-
     "wifi_connecte": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pas_internet", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      }
     ],
     "signal_wifi_visible": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "wifi_connecte", "value": false}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "wifi_connecte",
+        "value": false
+      }
     ],
     "autres_appareils_fonctionnent": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pas_internet", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pas_internet",
+        "value": true
+      }
     ],
     "loin_du_routeur": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "internet_lent", "value": true},
-      {"question": "wifi_connecte", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "internet_lent",
+        "value": true
+      }
     ],
-
     "beaucoup_applications_ouvertes": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_lent", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_lent",
+        "value": true
+      }
     ],
     "demarrage_lent": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_lent", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_lent",
+        "value": true
+      }
     ],
     "bruits_cliquetis": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_lent", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_lent",
+        "value": true
+      }
     ],
     "disque_presque_plein": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_lent", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_lent",
+        "value": true
+      }
     ],
     "virus_detecte": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_lent", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_lent",
+        "value": true
+      }
     ],
-
     "redemarrages_aleatoires": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "ecran_bleu_bsod", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "ecran_bleu_bsod",
+        "value": true
+      }
     ],
     "pilote_recent_installe": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "ecran_bleu_bsod", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "ecran_bleu_bsod",
+        "value": true
+      }
     ],
-
     "application_specifique": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_gele", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_gele",
+        "value": true
+      }
     ],
-
     "surchauffe": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "pc_s_eteint_seul", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "pc_s_eteint_seul",
+        "value": true
+      }
     ],
     "bruit_ventilateur_fort": [
-      {"question": "pc_ne_demarre_pas", "value": false},
-      {"question": "surchauffe", "value": true}
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "surchauffe",
+        "value": true
+      }
+    ],
+    "beaucoup_appareils_connectes": [
+      {
+        "question": "pc_ne_demarre_pas",
+        "value": false
+      },
+      {
+        "question": "internet_lent",
+        "value": true
+      }
     ]
   }
 }

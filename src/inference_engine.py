@@ -172,13 +172,27 @@ class KnowledgeBase:
 
     @lru_cache(maxsize=None)
     def infer_question_roots(self, question_id: str) -> tuple[str, ...]:
+        """
+        Remonte l'arbre de dépendances pour trouver les symptômes racines
+        dont cette question dépend positivement (value=True).
+
+        IMPORTANT : seules les dépendances value=True contribuent à la racine,
+        car une dépendance value=False signifie "ce symptôme doit être absent"
+        — elle ne rattache pas la question à la branche de ce symptôme.
+
+        Les questions dont toutes les dépendances sont value=False (ex: wifi_connecte
+        qui dépend de pc_ne_demarre_pas=False) n'ont aucune racine positive.
+        Elles sont gérées par leurs triggers dans question_triggers et par
+        are_dependencies_satisfied() — leur filtrage de branche est délégué
+        à is_question_triggered(), pas à is_question_in_active_branch().
+        """
         if question_id in self.root_symptoms:
             return (question_id,)
 
         roots: set[str] = set()
         for dependency in self.dependencies.get(question_id, []):
             parent_question = dependency.get("question")
-            # Pour déterminer la branche logique, on ne remonte que les prérequis positifs.
+            # On ne remonte que les prérequis positifs pour l'inférence de branche.
             if dependency.get("value") is not True:
                 continue
             if parent_question in self.symptom_questions:
@@ -322,14 +336,25 @@ class InferenceEngine:
         }
 
     def is_question_in_active_branch(self, question_id: str, fact_base: FactBase) -> bool:
+        """
+        Vérifie si cette question appartient à une branche active.
+
+        CORRECTION : les questions sans racine détectée (dont toutes les deps
+        sont value=False, ex: wifi_connecte, ram_pleine, volume_non_mute...)
+        ne sont plus bloquées ici. Leur filtrage est délégué à
+        is_question_triggered() et are_dependencies_satisfied() qui
+        garantissent déjà qu'elles ne sont posées que dans le bon contexte.
+        """
         active_roots = self.get_active_roots(fact_base)
         if not active_roots:
             return True
 
         question_roots = set(self.kb.infer_question_roots(question_id))
+
+        # Si aucune racine positive détectée → guidée par triggers, pas bloquée ici.
         if not question_roots:
-            # Une question sans branche explicite ne doit pas échapper au filtrage strict.
-            return False
+            return True
+
         return bool(question_roots.intersection(active_roots))
 
     def is_question_triggered(self, question_id: str, fact_base: FactBase) -> bool:
